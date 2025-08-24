@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DreamLAB: Patología Clínica II</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Kirby's Dreamland (Pink, Blue, Yellow) -->
+    <!-- Application Structure Plan: A tabbed single-page application ("Inicio", "La Aventura", "Tus Poderes", "Recompensas", "Evaluación") was chosen to break down the dense syllabus into manageable, non-linear sections. This structure enhances usability by allowing students to quickly navigate to specific information like rubrics or challenges without excessive scrolling, making the content more digestible and explorable. -->
+    <!-- Visualization & Content Choices: Course Structure -> Goal: Organize -> Method: Interactive Card Grid (HTML/CSS) -> Interaction: Hover effects -> Justification: More engaging than a list. Skills/Rubrics -> Goal: Organize -> Method: Accordion UI (JS) -> Interaction: Click to expand/collapse -> Justification: Manages information density. Evaluation Breakdown -> Goal: Compare -> Method: Donut Charts (Chart.js/Canvas) -> Interaction: Hover for tooltips -> Justification: Provides an immediate visual understanding of grade weighting. CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f9ff; /* sky-50 */
+        }
+        .tab-active {
+            border-color: #db2777; /* pink-600 */
+            color: #db2777; /* pink-600 */
+            background-color: #fdf2f8; /* pink-50 */
+        }
+        .tab-inactive {
+            border-color: transparent;
+            color: #475569; /* blue-600 */
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .accordion-open .accordion-content {
+            max-height: 1000px; /* Arbitrary large value */
+            transition: max-height 0.5s ease-in;
+        }
+        .accordion-open svg {
+            transform: rotate(180deg);
+        }
+        .card-hover-effect {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card-hover-effect:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .chart-container {
+            position: relative;
+            height: 280px;
+            width: 100%;
+            max-width: 280px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-pink-500">DreamLAB: Patología Clínica II</h1>
+            <p class="text-lg text-slate-600 mt-2">Tu aventura para convertirte en un Bio-Héroe</p>
+        </header>
+
+        <nav class="flex flex-wrap justify-center border-b-2 border-slate-300 mb-8">
+            <button class="tab tab-active py-3 px-6 font-semibold border-b-4 transition-all duration-300" onclick="switchTab('inicio')">🏠 Inicio</button>
+            <button class="tab tab-inactive py-3 px-6 font-semibold border-b-4 transition-all duration-300" onclick="switchTab('aventura')">☁️ La Aventura</button>
+            <button class="tab tab-inactive py-3 px-6 font-semibold border-b-4 transition-all duration-300" onclick="switchTab('poderes')">✨ Habilidades de Copia</button>
+            <button class="tab tab-inactive py-3 px-6 font-semibold border-b-4 transition-all duration-300" onclick="switchTab('recompensas')">⭐ Recompensas</button>
+            <button class="tab tab-inactive py-3 px-6 font-semibold border-b-4 transition-all duration-300" onclick="switchTab('evaluacion')">💖 Puntos de Corazón</button>
+        </nav>
+
+        <main>
+            <!-- Sección Inicio -->
+            <section id="inicio" class="tab-content">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-3xl font-bold text-pink-600 mb-4">¡Bienvenido a DreamLAB!</h2>
+                    <p class="mb-6 text-slate-700">Este curso está diseñado como una aventura para recuperar los tesoros del conocimiento en el laboratorio. Tu objetivo es convertirte en un experto en Patología Clínica II. Aquí te explicamos cómo funciona de una forma súper sencilla.</p>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-2xl font-semibold mb-3 text-slate-800">El Objetivo Principal: Obtener tus Puntos de Corazón (PC)</h3>
+                        <p class="text-slate-600">Tu meta es acumular **100 Puntos de Corazón (PC)**. Estos PC son tu calificación final. Cada actividad y examen te dará PC. ¡100 PC significa que has salvado el DreamLAB con la mejor nota!</p>
+                        <div class="flex flex-col md:flex-row gap-4 mt-4">
+                            <div class="flex-1 bg-pink-50 p-4 rounded-lg border border-pink-200">
+                                <p class="font-bold text-pink-800 text-lg">💖 PC: Tu Calificación</p>
+                                <p class="text-pink-700">Los puntos que obtienes en actividades y exámenes.</p>
+                            </div>
+                            <div class="flex-1 bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                                <p class="font-bold text-yellow-800 text-lg">⭐ Data-Créditos</p>
+                                <p class="text-yellow-700">Puntos adicionales de desafíos opcionales. ¡Son tu red de seguridad!</p>
+                            </div>
+                        </div>
+                         <p class="mt-4 text-sm text-slate-600"><strong>Canje:</strong> Por cada **100 Data-Créditos** que acumules, puedes obtener **5 PC** para recuperar puntos perdidos.</p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800">Ruta de la Aventura: Tu Estrategia para Ganar</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-4">
+                                <div class="flex-shrink-0 w-12 h-12 bg-pink-500 text-white rounded-full flex items-center justify-center font-bold text-xl">1</div>
+                                <div>
+                                    <h4 class="font-bold text-lg">¡Empieza a Flotar!</h4>
+                                    <p class="text-slate-600">Las primeras 12 semanas son para explorar los 7 "Mundos". Concéntrate en las actividades diarias y prácticas para ganar tus primeros 50 PC.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="flex-shrink-0 w-12 h-12 bg-pink-500 text-white rounded-full flex items-center justify-center font-bold text-xl">2</div>
+                                <div>
+                                    <h4 class="font-bold text-lg">¡Copia Habilidades!</h4>
+                                    <p class="text-slate-600">En cada actividad, revisa la rúbrica para saber cómo se te evalúa. Pasa de <strong>Bio-Aprendiz</strong> a <strong>Bio-Técnico</strong>, <strong>Bio-Maestro</strong> y, finalmente, a <strong>Bio-Héroe</strong>.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="flex-shrink-0 w-12 h-12 bg-pink-500 text-white rounded-full flex items-center justify-center font-bold text-xl">3</div>
+                                <div>
+                                    <h4 class="font-bold text-lg">¡Encuentra los Tesoros Ocultos!</h4>
+                                    <p class="text-slate-600">Participa en los desafíos opcionales (presentaciones, debates, talleres). Son tu oportunidad para ganar Data-Créditos.</p>
+                                </div>
+                            </div>
+                             <div class="flex items-start gap-4">
+                                <div class="flex-shrink-0 w-12 h-12 bg-yellow-500 text-white rounded-full flex items-center justify-center font-bold text-xl">4</div>
+                                <div>
+                                    <h4 class="font-bold text-lg">¡Conviértete en Bio-Héroe!</h4>
+                                    <p class="text-slate-600">Si logras el nivel "Bio-Héroe" en alguna rúbrica, obtienes una bonificación de **+25 Data-Créditos**. ¡Es clave para asegurar un colchón de puntos!</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="flex-shrink-0 w-12 h-12 bg-pink-500 text-white rounded-full flex items-center justify-center font-bold text-xl">5</div>
+                                <div>
+                                    <h4 class="font-bold text-lg">¡La Batalla Final contra el Patógeno Alfa!</h4>
+                                    <p class="text-slate-600">En las semanas 13 y 14, usa todas tus habilidades en el Examen Práctico y el Proyecto Final para asegurar los últimos 50 PC y recuperar los tesoros.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="flex-shrink-0 w-12 h-12 bg-pink-500 text-white rounded-full flex items-center justify-center font-bold text-xl">6</div>
+                                <div>
+                                    <h4 class="font-bold text-lg">¡Canjea tus Data-Créditos!</h4>
+                                    <p class="text-slate-600">Al final, revisa tus Data-Créditos acumulados. Si perdiste PC, úsalos para recuperarlos y mejorar tu calificación.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección La Aventura -->
+            <section id="aventura" class="tab-content hidden">
+                 <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-3xl font-bold text-pink-600 mb-4">La Aventura: 7 Mundos por Conquistar</h2>
+                    <p class="mb-6 text-slate-700">El semestre está dividido en 7 mundos temáticos que explorarás a lo largo de 12 semanas, culminando en una fase final épica. Cada mundo te presentará nuevos desafíos y conocimientos.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 card-hover-effect">
+                            <p class="text-sm font-semibold text-pink-600">Semanas 1-2</p>
+                            <h3 class="text-xl font-bold">Mundo 1: La Activación del Bio-Chip</h3>
+                            <p class="text-slate-600">Introducción a la Patología Clínica II</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 card-hover-effect">
+                            <p class="text-sm font-semibold text-pink-600">Semanas 3-4</p>
+                            <h3 class="text-xl font-bold">Mundo 2: El Laboratorio Hemático</h3>
+                            <p class="text-slate-600">Estudio Básico de la Sangre</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 card-hover-effect">
+                            <p class="text-sm font-semibold text-pink-600">Semana 5</p>
+                            <h3 class="text-xl font-bold">Mundo 3: La Torre de la Transfusión Segura</h3>
+                            <p class="text-slate-600">Banco de Sangre y Medicina Transfusional</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 card-hover-effect">
+                            <p class="text-sm font-semibold text-pink-600">Semanas 6-7</p>
+                            <h3 class="text-xl font-bold">Mundo 4: El Bosque Metabólico</h3>
+                            <p class="text-slate-600">Valoración Metabólica Básica</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 card-hover-effect">
+                            <p class="text-sm font-semibold text-pink-600">Semana 8</p>
+                            <h3 class="text-xl font-bold">Mundo 5: La Gruta de la Filtración Glomerular</h3>
+                            <p class="text-slate-600">Valoración Renal Básica</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 card-hover-effect">
+                            <p class="text-sm font-semibold text-pink-600">Semana 9</p>
+                            <h3 class="text-xl font-bold">Mundo 6: El Oasis Hepático</h3>
+                            <p class="text-slate-600">Valoración Hepática Básica</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 card-hover-effect md:col-span-2 lg:col-span-1">
+                            <p class="text-sm font-semibold text-pink-600">Semanas 10-12</p>
+                            <h3 class="text-xl font-bold">Mundo 7: El Cañón del Equilibrio Iónico</h3>
+                            <p class="text-slate-600">Evaluación del Equilibrio Ácido-Base</p>
+                        </div>
+                        <div class="bg-yellow-100 p-4 rounded-lg border-2 border-yellow-400 card-hover-effect md:col-span-2 lg:col-span-2">
+                            <p class="text-sm font-semibold text-yellow-700">Semanas 13-14</p>
+                            <h3 class="text-xl font-bold text-yellow-800">⚔️ Fase Final: La Batalla con el Patógeno Alfa</h3>
+                            <p class="text-yellow-700">Examen Práctico y Proyecto Final (La Batalla de las Habilidades)</p>
+                        </div>
+                    </div>
+                 </div>
+            </section>
+
+            <!-- Sección Tus Poderes -->
+            <section id="poderes" class="tab-content hidden">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-3xl font-bold text-pink-600 mb-4">Tus Habilidades de Copia</h2>
+                    <p class="mb-6 text-slate-700">A lo largo de tu aventura, desarrollarás 6 habilidades clave, ordenadas de básicas a avanzadas. Domínalas para tener éxito en cada desafío. Haz clic en cada habilidad para ver su rúbrica de evaluación.</p>
+                    <div class="space-y-4" id="accordion-container">
+                        <!-- Accordion items will be generated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección Recompensas -->
+            <section id="recompensas" class="tab-content hidden">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-3xl font-bold text-pink-600 mb-4">Recompensas y Tesoros Opcionales</h2>
+                    <p class="mb-6 text-slate-700">Completa actividades opcionales para ganar **Data-Créditos (XP)**. Estos Data-Créditos te permitirán recuperar PC y demostrar tu dedicación.</p>
+
+                    <div class="mb-8">
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800">Coleccionables: Gana XP con los Tesoros</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-slate-100">
+                                    <tr>
+                                        <th class="p-3 font-semibold text-sm text-slate-700 border-b border-slate-300">Coleccionable</th>
+                                        <th class="p-3 font-semibold text-sm text-slate-700 border-b border-slate-300">Actividad</th>
+                                        <th class="p-3 font-semibold text-sm text-slate-700 border-b border-slate-300 text-center">XP</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="p-3 border-b border-slate-200 font-medium">Tesoro de Innovación ⚙️</td>
+                                        <td class="p-3 border-b border-slate-200">Presentación de un tema voluntario</td>
+                                        <td class="p-3 border-b border-slate-200 text-center font-bold text-pink-600">50 XP</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="p-3 border-b border-slate-200 font-medium">Tesoro de Iniciativa y Compromiso Social 🤝</td>
+                                        <td class="p-3 border-b border-slate-200">Propuesta de un debate sobre dilemas éticos</td>
+                                        <td class="p-3 border-b border-slate-200 text-center font-bold text-pink-600">40 XP</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="p-3 border-b border-slate-200 font-medium">Tesoro de Exploración 🔍</td>
+                                        <td class="p-3 border-b border-slate-200">Asistencia a talleres o actividades extra</td>
+                                        <td class="p-3 border-b border-slate-200 text-center font-bold text-pink-600">25 XP</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="p-3 border-b border-slate-200 font-medium">Tesoro de Conexión Humana 🔗</td>
+                                        <td class="p-3 border-b border-slate-200">Contribución Sociocultural</td>
+                                        <td class="p-3 border-b border-slate-200 text-center font-bold text-pink-600">75 XP</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800">Retos Especiales: Grandes Recompensas</h3>
+                         <div class="grid md:grid-cols-2 gap-6">
+                            <div class="bg-pink-50 p-6 rounded-lg border border-pink-200">
+                                <h4 class="text-xl font-bold text-pink-800">Patógeno Alfa 🐉</h4>
+                                <p class="text-pink-700 mt-2 mb-3">Resuelve un caso clínico complejo al final de una unidad para ganar una gran bonificación.</p>
+                                <p class="text-2xl font-bold text-pink-600">100 XP por equipo</p>
+                                <p class="text-xs text-pink-600 mt-1">Disponible a partir de la Unidad 2.</p>
+                            </div>
+                            <div class="bg-yellow-50 p-6 rounded-lg border border-yellow-200">
+                                <h4 class="text-xl font-bold text-yellow-800">Logro: Patólogo Supremo 🏆</h4>
+                                <p class="text-yellow-700 mt-2 mb-3">Obtén una puntuación sobresaliente en el Proyecto Final para la máxima recompensa.</p>
+                                <p class="text-2xl font-bold text-yellow-600">150 XP por equipo</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección Evaluación -->
+            <section id="evaluacion" class="tab-content hidden">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-3xl font-bold text-pink-600 mb-4">Evaluación: Tus Puntos de Corazón (PC)</h2>
+                    <p class="mb-6 text-slate-700">Tu calificación final se basa en una escala de 100 PC, divididos en dos fases. Los gráficos a continuación muestran cómo se distribuye el peso de cada actividad.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <h3 class="text-2xl font-semibold text-center mb-2 text-slate-800">Fase Parcial (50 PC)</h3>
+                            <div class="chart-container">
+                                <canvas id="partialChart"></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-semibold text-center mb-2 text-slate-800">Fase Final (50 PC)</h3>
+                            <div class="chart-container">
+                                <canvas id="finalChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8 bg-blue-50 p-4 rounded-lg border border-blue-200">
+                      <h3 class="text-xl font-semibold text-slate-800 mb-2">Progresión y Recuperación</h3>
+                      <p class="text-slate-700">Para completar un "Mundo", debes aprobar su evaluación y todas sus actividades. Si no lo logras, puedes "reintentar" con un examen de recuperación, siempre que hayas completado las actividades pendientes. Recuerda que puedes canjear **100 Data-Créditos por 5 PC** para recuperar puntos perdidos en tareas o exámenes.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        function switchTab(tabId) {
+            tabs.forEach(tab => {
+                tab.classList.remove('tab-active');
+                tab.classList.add('tab-inactive');
+            });
+            tabContents.forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            const selectedTab = document.querySelector(`button[onclick="switchTab('${tabId}')"]`);
+            const selectedContent = document.getElementById(tabId);
+
+            selectedTab.classList.add('tab-active');
+            selectedTab.classList.remove('tab-inactive');
+            selectedContent.classList.remove('hidden');
+        }
+
+        const powersData = [
+            { 
+                title: "1. Habilidad de Copia de Constancia", 
+                level: "Nivel Bio-Aprendiz", 
+                description: "Adquirido con la participación y la entrega constante y a tiempo de las actividades y tareas en clase. Sin esta habilidad, es difícil avanzar en el curso.",
+                rubric: [
+                    { rank: "Bio-Aprendiz", criteria: "Entrega actividades con retrasos frecuentes o con un esfuerzo mínimo. Muestra poca participación.", pv: "0-5" },
+                    { rank: "Bio-Técnico", criteria: "Entrega la mayoría de las actividades a tiempo y participa de forma ocasional. Cumple con los requisitos mínimos.", pv: "6-10" },
+                    { rank: "Bio-Maestro", criteria: "Entrega todas las actividades a tiempo, demostrando un esfuerzo consistente y de alta calidad. Su participación es activa.", pv: "11-15" },
+                    { rank: "Bio-Héroe", criteria: "Fomenta la participación de sus compañeros y ayuda a mantener al equipo cohesionado y productivo.", pv: "+25 XP" }
+                ]
+            },
+            { 
+                title: "2. Habilidad de Copia de Memoria y Asociación", 
+                level: "Nivel Básico a Intermedio", 
+                description: "Se entrena con juegos en el aula, como memorama, para memorizar y asociar conceptos clave.",
+                rubric: [
+                    { rank: "Bio-Aprendiz", criteria: "Dificultad para recordar conceptos básicos y no logra asociarlos con la terminología correcta.", pv: "0-5" },
+                    { rank: "Bio-Técnico", criteria: "Puede recordar conceptos clave, pero le toma tiempo. Logra asociaciones sencillas.", pv: "6-10" },
+                    { rank: "Bio-Maestro", criteria: "Memoriza y asocia los conceptos con agilidad. Responde de forma rápida y precisa.", pv: "11-15" },
+                    { rank: "Bio-Héroe", criteria: "Es capaz de explicar las conexiones entre conceptos complejos. Se convierte en un referente.", pv: "+25 XP" }
+                ]
+            },
+            { 
+                title: "3. Habilidad de Copia de Aplicación Práctica", 
+                level: "Nivel Intermedio", 
+                description: "Se desarrolla en las prácticas de laboratorio y con el uso de simuladores de técnicas de laboratorio.",
+                rubric: [
+                    { rank: "Bio-Aprendiz", criteria: "Requiere supervisión constante, comete errores de procedimiento y tiene dificultad para utilizar el equipo.", pv: "0-7" },
+                    { rank: "Bio-Técnico", criteria: "Puede seguir las instrucciones básicas, pero comete errores menores. Logra obtener resultados, pero no con total fluidez.", pv: "8-14" },
+                    { rank: "Bio-Maestro", criteria: "Realiza los procedimientos de manera autónoma y precisa. Demuestra destreza y obtiene resultados fiables.", pv: "15-20" },
+                    { rank: "Bio-Héroe", criteria: "Ejecuta los procedimientos con la máxima precisión y eficiencia. Es capaz de identificar y corregir errores de sus compañeros.", pv: "+25 XP" }
+                ]
+            },
+            { 
+                title: "4. Habilidad de Copia de Interpretación Clínica", 
+                level: "Nivel Avanzado", 
+                description: "Se adquiere al trabajar con simuladores de casos clínicos y datos de estudios simulados.",
+                rubric: [
+                    { rank: "Bio-Aprendiz", criteria: "Dificultad para identificar datos relevantes y no logra correlacionar los resultados con los síntomas.", pv: "0-8 (Examen)" },
+                    { rank: "Bio-Técnico", criteria: "Logra identificar algunos datos relevantes, pero su interpretación es incompleta.", pv: "9-16 (Examen)" },
+                    { rank: "Bio-Maestro", criteria: "Interpreta correctamente los datos y los correlaciona de manera lógica para llegar a un diagnóstico preciso.", pv: "17-25 (Examen)" },
+                    { rank: "Bio-Héroe", criteria: "No solo llega a un diagnóstico exacto, sino que también identifica posibles diagnósticos diferenciales.", pv: "+25 XP (Examen)" }
+                ]
+            },
+            { 
+                title: "5. Habilidad de Copia de Análisis Crítico", 
+                level: "Nivel Avanzado", 
+                description: "Se fortalece con los exámenes teóricos y al enfrentarse a casos simulados para evaluar la información de manera crítica.",
+                rubric: [
+                    { rank: "Bio-Aprendiz", criteria: "Responde con base en la memorización, sin demostrar un entendimiento profundo.", pv: "0-8 (Examen)" },
+                    { rank: "Bio-Técnico", criteria: "Demuestra un entendimiento conceptual básico, pero se confunde ante problemas con múltiples variables.", pv: "9-16 (Examen)" },
+                    { rank: "Bio-Maestro", criteria: "Evalúa la información de manera crítica. Puede desglosar problemas complejos y proponer soluciones bien razonadas.", pv: "17-25 (Examen)" },
+                    { rank: "Bio-Héroe", criteria: "Cuestiona las premisas de los casos, ofrece perspectivas nuevas y demuestra un pensamiento de nivel superior.", pv: "+25 XP (Examen)" }
+                ]
+            },
+            { 
+                title: "6. Habilidad de Copia de Argumentación", 
+                level: "Nivel Máximo", 
+                description: "Adquirido a través de la presentación digital individual. Es la habilidad que culmina todas las demás.",
+                rubric: [
+                    { rank: "Bio-Aprendiz", criteria: "Presenta sus hallazgos de forma desorganizada. Sus argumentos carecen de evidencia.", pv: "0-1 (Proyecto)" },
+                    { rank: "Bio-Técnico", criteria: "Presenta sus hallazgos de manera básica, con argumentos que tienen una lógica débil.", pv: "2-3 (Proyecto)" },
+                    { rank: "Bio-Maestro", criteria: "Presenta sus hallazgos de forma clara y coherente. Sus argumentos son sólidos y están respaldados por evidencia.", pv: "4-5 (Proyecto)" },
+                    { rank: "Bio-Héroe", criteria: "Articula sus ideas con una claridad y precisión excepcionales. Sus argumentos son irrefutables.", pv: "+25 XP (Proyecto)" }
+                ]
+            }
+        ];
+
+        const accordionContainer = document.getElementById('accordion-container');
+        powersData.forEach(power => {
+            const item = document.createElement('div');
+            item.className = 'border border-slate-200 rounded-lg accordion-item';
+            
+            let rubricHTML = power.rubric.map(r => `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-2 border border-slate-200 font-semibold">${r.rank}</td>
+                    <td class="p-2 border border-slate-200">${r.criteria}</td>
+                    <td class="p-2 border border-slate-200 text-center font-bold text-pink-600">${r.pv}</td>
+                </tr>
+            `).join('');
+
+            item.innerHTML = `
+                <button class="w-full flex justify-between items-center text-left p-4 bg-slate-50 hover:bg-slate-100 transition-colors duration-200">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800">${power.title}</h3>
+                        <p class="text-sm text-pink-600 font-semibold">${power.level}</p>
+                    </div>
+                    <svg class="w-6 h-6 text-slate-500 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="accordion-content">
+                    <div class="p-4 border-t border-slate-200">
+                        <p class="mb-4 text-slate-600">${power.description}</p>
+                        <table class="w-full text-sm border-collapse">
+                           <thead class="bg-slate-100">
+                                <tr>
+                                    <th class="p-2 border border-slate-200">Nivel</th>
+                                    <th class="p-2 border border-slate-200">Criterios</th>
+                                    <th class="p-2 border border-slate-200">PC / Recompensa</th>
+                                </tr>
+                           </thead>
+                           <tbody>${rubricHTML}</tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            accordionContainer.appendChild(item);
+        });
+
+        document.querySelectorAll('.accordion-item button').forEach(button => {
+            button.addEventListener('click', () => {
+                const item = button.parentElement;
+                item.classList.toggle('accordion-open');
+            });
+        });
+
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '60%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        font: {
+                            size: 14
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed !== null) {
+                                label += context.parsed + ' PC';
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        };
+
+        const partialCtx = document.getElementById('partialChart').getContext('2d');
+        new Chart(partialCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Actividades y Tareas', 'Prácticas de Laboratorio'],
+                datasets: [{
+                    label: 'Fase Parcial',
+                    data: [30, 20],
+                    backgroundColor: ['#ec4899', '#f472b6'],
+                    borderColor: ['#be185d', '#ec4899'],
+                    borderWidth: 1
+                }]
+            },
+            options: chartOptions
+        });
+
+        const finalCtx = document.getElementById('finalChart').getContext('2d');
+        new Chart(finalCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Examen Práctico', 'Proyecto Final'],
+                datasets: [{
+                    label: 'Fase Final',
+                    data: [25, 25],
+                    backgroundColor: ['#fde047', '#fcd34d'],
+                    borderColor: ['#eab308', '#fde047'],
+                    borderWidth: 1
+                }]
+            },
+            options: chartOptions
+        });
+    </script>
+</body>
+</html>
