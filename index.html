@@ -9,9 +9,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Kirby's Dreamland (Pink, Blue, Yellow) -->
-    <!-- Application Structure Plan: A tabbed single-page application ("Inicio", "La Aventura", "Tus Poderes", "Recompensas", "Evaluación", "Rúbricas") was chosen to break down the dense syllabus into manageable, non-linear sections. This structure enhances usability by allowing students to quickly navigate to specific information like rubrics or challenges without excessive scrolling, making the content more digestible and explorable. -->
-    <!-- Visualization & Content Choices: Course Structure -> Goal: Organize -> Method: Interactive Card Grid (HTML/CSS) -> Interaction: Hover effects -> Justification: More engaging than a list. Skills/Rubrics -> Goal: Organize -> Method: Accordion UI (JS) -> Interaction: Click to expand/collapse -> Justification: Manages information density. Evaluation Breakdown -> Goal: Compare -> Method: Donut Charts (Chart.js/Canvas) -> Interaction: Hover for tooltips -> Justification: Provides an immediate visual understanding of grade weighting. -->
     <style>
         /* Base de la paleta y fuentes de Kirby */
         body {
@@ -135,7 +132,6 @@
         </header>
 
         <nav class="flex flex-wrap justify-center border-b-2 border-pink-300 mb-8 pb-4">
-            <!-- Botones de pestaña con clases `tab` y `tab-active/inactive` -->
             <button class="tab tab-active font-semibold" onclick="switchTab('inicio')">💖 Inicio</button>
             <button class="tab tab-inactive font-semibold" onclick="switchTab('aventura')">☁️ La Aventura</button>
             <button class="tab tab-inactive font-semibold" onclick="switchTab('misiones')">📜 Misiones</button>
@@ -146,7 +142,6 @@
         </nav>
 
         <main>
-            <!-- Sección Inicio - visible por defecto -->
             <section id="inicio" class="tab-content">
                 <div class="kirby-card">
                     <h2 class="text-3xl font-bold text-pink-600 mb-4">¡Bienvenido a DreamLAB!</h2>
@@ -218,7 +213,6 @@
                 </div>
             </section>
 
-            <!-- Sección La Aventura - oculta por defecto -->
             <section id="aventura" class="tab-content hidden">
                  <div class="kirby-card">
                     <h2 class="text-3xl font-bold text-pink-600 mb-4">La Aventura: 7 Mundos por Conquistar</h2>
@@ -268,18 +262,15 @@
                  </div>
             </section>
 
-            <!-- Sección Misiones - oculta por defecto -->
             <section id="misiones" class="tab-content hidden">
                 <div class="kirby-card">
                     <h2 class="text-3xl font-bold text-pink-600 mb-4">Misiones Opcionales: Desbloqueando Tesoros y Recompensas</h2>
                     <p class="mb-6 text-slate-700">Más allá de los módulos principales, DreamLAB te ofrece la oportunidad de emprender misiones opcionales que te permitirán adquirir **Tesoros** (insignias) y acumular **Estrellas de Créditos** adicionales. Estas misiones están diseñadas para poner a prueba tu curiosidad y tu compromiso.</p>
 
-                    <!-- Presentación de Gamma -->
                     <div class="flex justify-center my-8">
                         <iframe src="https://gamma.app/embed/8operl9sauvgra8" style="width: 700px; max-width: 100%; height: 450px" allow="fullscreen" title="🚀 Misiones, Retos y Tesoros de DreamLAB"></iframe>
                     </div>
 
-                    <!-- Presentación de un Tema -->
                     <div class="mb-8 p-4 border-2 border-purple-200 rounded-xl bg-purple-50 shadow-inner">
                         <div class="flex items-center mb-2">
                             <span class="text-3xl">⚙️</span>
@@ -293,7 +284,6 @@
                         </ul>
                     </div>
 
-                    <!-- Propuesta de un Debate -->
                     <div class="mb-8 p-4 border-2 border-green-200 rounded-xl bg-green-50 shadow-inner">
                         <div class="flex items-center mb-2">
                             <span class="text-3xl">🤝🔗</span>
@@ -307,7 +297,6 @@
                         </ul>
                     </div>
 
-                    <!-- Asistencia a Eventos -->
                     <div class="mb-8 p-4 border-2 border-pink-200 rounded-xl bg-pink-50 shadow-inner">
                         <div class="flex items-center mb-2">
                             <span class="text-3xl">🔍</span>
@@ -321,7 +310,6 @@
                         </ul>
                     </div>
 
-                    <!-- Contribución Sociocultural -->
                     <div class="mb-8 p-4 border-2 border-orange-200 rounded-xl bg-orange-50 shadow-inner">
                         <div class="flex items-center mb-2">
                             <span class="text-3xl">🔗</span>
@@ -342,7 +330,6 @@
                 </div>
             </section>
 
-            <!-- Sección Tus Poderes - oculta por defecto -->
             <section id="poderes" class="tab-content hidden">
                 <div class="kirby-card">
                     <h2 class="text-3xl font-bold text-pink-600 mb-4">✨ Habilidades de Copia: Domina la Fisiopatología como un Bio-Héroe</h2>
@@ -422,7 +409,6 @@
                 </div>
             </section>
 
-            <!-- Sección Recompensas - oculta por defecto -->
             <section id="recompensas" class="tab-content hidden">
                 <div class="kirby-card">
                     <h2 class="text-3xl font-bold text-pink-600 mb-4">Recompensas y Tesoros Opcionales</h2>
@@ -484,7 +470,6 @@
                 </div>
             </section>
 
-            <!-- Sección Evaluación - oculta por defecto -->
             <section id="evaluacion" class="tab-content hidden">
                 <div class="kirby-card">
                     <h2 class="text-3xl font-bold text-pink-600 mb-4">Evaluación: Tus Puntos de Corazón (PC)</h2>
@@ -510,20 +495,17 @@
                 </div>
             </section>
 
-            <!-- Sección Rúbricas - oculta por defecto -->
             <section id="rubricas" class="tab-content hidden">
                 <div class="kirby-card">
                     <h2 class="text-3xl font-bold text-pink-600 mb-4">Rúbricas: Los Criterios para cada Nivel de Habilidad</h2>
                     <p class="mb-6 text-slate-700">Aquí puedes encontrar los criterios detallados para cada nivel de habilidad. Utiliza esta guía para asegurar que estás en el camino correcto para convertirte en un Bio-Héroe.</p>
                     <div class="space-y-4" id="rubric-accordion-container">
-                        <!-- Accordion items will be generated by JS -->
-                    </div>
+                        </div>
                 </div>
             </section>
         </main>
     </div>
     
-    <!-- Footer -->
     <footer class="bg-pink-700 text-white text-center p-4 mt-8 rounded-t-3xl shadow-lg">
         <p class="font-semibold">&copy; 2025 | Adriana A. Barrios Rodríguez | Patología Clínica II</p>
     </footer>
@@ -611,7 +593,7 @@
             }
         ];
 
-        // Función para crear cada sección de la rúbrica
+        // Función para crear cada sección de la rúbrica (item del acordeón)
         function createAccordionItem(data) {
             const item = document.createElement('div');
             item.className = 'border border-pink-200 rounded-lg accordion-item';
@@ -686,16 +668,22 @@
         
         // Inicializa el acordeón para la sección de "Rúbricas"
         function initializeRubrics() {
-            const rubricsContainer = document.getElementById('rubricas').querySelector('.kirby-card');
-            rubricsContainer.innerHTML = `<h2 class="text-3xl font-bold text-pink-600 mb-4">Rúbricas: Los Criterios para cada Nivel de Habilidad</h2>
-                        <p class="mb-6 text-slate-700">Aquí puedes encontrar los criterios detallados para cada nivel de habilidad. Utiliza esta guía para asegurar que estás en el camino correcto para convertirte en un Bio-Héroe.</p>
-                        <div class="space-y-4" id="rubric-accordion-container"></div>`;
+            const rubricsContainer = document.getElementById('rubricas');
             const rubricAccordionContainer = document.getElementById('rubric-accordion-container');
+            
+            if (!rubricsContainer || !rubricAccordionContainer) {
+                console.error("No se encontró el contenedor de rúbricas.");
+                return;
+            }
+
+            // Generar dinámicamente el contenido del acordeón
+            rubricAccordionContainer.innerHTML = ''; // Limpiar contenido anterior si lo hubiera
             skillsData.forEach(skill => {
                 const item = createAccordionItem(skill);
                 rubricAccordionContainer.appendChild(item);
             });
 
+            // Añadir el event listener a cada botón del acordeón
             document.querySelectorAll('.accordion-item button').forEach(button => {
                 button.addEventListener('click', () => {
                     const item = button.parentElement;
@@ -742,12 +730,12 @@
                 new Chart(partialCtx.getContext('2d'), {
                     type: 'doughnut',
                     data: {
-                        labels: ['Actividades y Tareas', 'Prácticas de Laboratorio'],
+                        labels: ['Actividades y Tareas', 'Prácticas de Laboratorio', 'Exámenes Teóricos'],
                         datasets: [{
                             label: 'Fase Parcial',
-                            data: [30, 20],
-                            backgroundColor: ['#ec4899', '#f472b6'],
-                            borderColor: ['#be185d', '#ec4899'],
+                            data: [20, 20, 10],
+                            backgroundColor: ['#ec4899', '#f472b6', '#fbcfe8'],
+                            borderColor: ['#be185d', '#ec4899', '#fbcfe8'],
                             borderWidth: 1
                         }]
                     },
